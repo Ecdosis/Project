@@ -24,4 +24,5 @@ package project.constants;
 public class Service {
     public static final String PROJECT = "project";
     public static final String SPONSORS = "sponsors";
+    public static final String LIST = "list";
 }

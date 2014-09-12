@@ -42,23 +42,42 @@ public class ProjectGetHandler
             String first = Utils.first(urn);
             if ( first != null && first.equals(Service.SPONSORS) )
                 new ProjectGetSponsors().handle(request,response,Utils.pop(urn) );
-            else
+            else if ( first != null && first.equals(Service.LIST) )
+            {
+                Connection conn = Connector.getConnection();
+                String[] projects = conn.listCollection(Database.PROJECTS );
+                JSONArray jProjs = new JSONArray();
+                for ( String project: projects )
+                {
+                    String jstr = conn.getFromDb( Database.PROJECTS, project );
+                    if ( jstr != null )
+                    {
+                        JSONObject jDoc = (JSONObject)JSONValue.parse(jstr);
+                        jDoc.put( JSONKeys.ICON, Database.CORPIX+"/"+urn
+                            +"/project/"+JSONKeys.ICON );
+                        jProjs.add( jDoc );
+                    }
+                }
+                response.setCharacterEncoding("UTF-8");
+                response.getWriter().println(jProjs.toJSONString());
+            }
+            else    // user wants a specifc project
             {
                 Connection conn = Connector.getConnection();
                 String jstr = conn.getFromDb( Database.PROJECTS, urn );
+                JSONObject jDoc = (JSONObject)JSONValue.parse(jstr);
                 if ( jstr != null )
                 {
-                    JSONObject jDoc = (JSONObject)JSONValue.parse(jstr);
+                    jDoc.put( JSONKeys.ICON, Database.CORPIX+"/"+urn
+                        +"/project/"+JSONKeys.ICON );
                     String[] docs = conn.listDocuments(Database.CORTEX, urn+".*");
                     Long works = new Long(docs.length);
                     jDoc.put( JSONKeys.NWORKS, works );
                     String[] images = conn.listDocuments(Database.CORPIX, urn+".*");
                     jDoc.put( JSONKeys.NIMAGES, images.length );
-                    response.setCharacterEncoding("UTF-8");
-                    response.getWriter().println(jDoc.toJSONString());
                 }
-                else
-                    throw new ProjectException("Project "+urn+" not found");
+                response.setCharacterEncoding("UTF-8");
+                response.getWriter().println(jDoc.toJSONString());               
             }
         } 
         catch (Exception e) 
