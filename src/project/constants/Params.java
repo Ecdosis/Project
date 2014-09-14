@@ -26,4 +26,8 @@ public class Params {
     public static final String DOCID = "docid";
     public static final String DESCRIPTION = "description";
     public static final String OWNER = "owner";
+    public static final String LANGUAGE = "language";
+    public static final String WORK = "work";
+    public static final String AUTHOR = "author";
+    public static final String SITE_URL = "site_url";
 }

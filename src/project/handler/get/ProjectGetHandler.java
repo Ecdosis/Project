@@ -22,7 +22,7 @@ import calliope.core.database.*;
 import calliope.core.Utils;
 import calliope.core.constants.JSONKeys;
 import project.exception.*;
-import project.constants.Service;
+import project.constants.*;
 import org.json.simple.*;
 import calliope.core.constants.Database;
 import javax.servlet.http.HttpServletRequest;
@@ -61,23 +61,42 @@ public class ProjectGetHandler
                 response.setCharacterEncoding("UTF-8");
                 response.getWriter().println(jProjs.toJSONString());
             }
-            else    // user wants a specifc project
+            else if ( first.equals(Service.VIEW) )
+            {
+                 String docid = request.getParameter(Params.DOCID);
+                 Connection conn = Connector.getConnection();
+                 String jstr = conn.getFromDb( Database.PROJECTS, docid );
+                 if ( jstr != null )
+                 {
+                     JSONObject jDoc = (JSONObject)JSONValue.parse(jstr);
+                     String url = (String)jDoc.get(JSONKeys.URL);
+                     if ( url == null )
+                     {
+                         System.out.println("Missing site url for "+docid);
+                         url = request.getRequestURI();
+                     }
+                     response.sendRedirect(url);
+                 }
+            }
+            else    // user wants a specific project
             {
                 Connection conn = Connector.getConnection();
                 String jstr = conn.getFromDb( Database.PROJECTS, urn );
-                JSONObject jDoc = (JSONObject)JSONValue.parse(jstr);
                 if ( jstr != null )
                 {
-                    jDoc.put( JSONKeys.ICON, Database.CORPIX+"/"+urn
+                    JSONObject jDoc = (JSONObject)JSONValue.parse(jstr);
+                    jDoc.put( JSONKeys.ICON, "/mml/"+Database.CORPIX+"/"+urn
                         +"/project/"+JSONKeys.ICON );
                     String[] docs = conn.listDocuments(Database.CORTEX, urn+".*");
                     Long works = new Long(docs.length);
                     jDoc.put( JSONKeys.NWORKS, works );
                     String[] images = conn.listDocuments(Database.CORPIX, urn+".*");
                     jDoc.put( JSONKeys.NIMAGES, images.length );
+                    response.setCharacterEncoding("UTF-8");
+                    response.getWriter().println(jDoc.toJSONString());  
                 }
-                response.setCharacterEncoding("UTF-8");
-                response.getWriter().println(jDoc.toJSONString());               
+                else 
+                    throw new Exception("failed to find project "+urn);
             }
         } 
         catch (Exception e) 
