@@ -26,4 +26,5 @@ public class Service {
     public static final String SPONSORS = "sponsors";
     public static final String LIST = "list";
     public static final String VIEW = "view";
+    public static final String DOCUMENTS = "documents";
 }
