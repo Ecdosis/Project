@@ -27,6 +27,7 @@ import org.json.simple.JSONValue;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import project.exception.ProjectException;
+import calliope.core.Utils;
 /**
  * 
  * @author desmond
@@ -45,10 +46,16 @@ public class ProjectGetOneProject
                 JSONObject jDoc = (JSONObject)JSONValue.parse(jstr);
                 jDoc.put( JSONKeys.ICON, "/mml/"+Database.CORPIX+"/"+urn
                     +"/project/"+JSONKeys.ICON );
-                String[] docs = conn.listDocuments(Database.CORTEX, urn+".*");
+                String[] docs = conn.listDocuments(Database.CORTEX, urn+".*",
+                    JSONKeys.DOCID);
                 Long works = new Long(docs.length);
                 jDoc.put( JSONKeys.NWORKS, works );
-                String[] images = conn.listDocuments(Database.CORPIX, urn+".*");
+                String[] events = conn.listDocuments(Database.EVENTS, 
+                    Utils.shortDocID(urn)+".*", JSONKeys.DOCID );
+                Long nEvents = new Long(events.length);
+                jDoc.put( JSONKeys.NEVENTS, nEvents );
+                String[] images = conn.listDocuments(Database.CORPIX, urn+".*",
+                    JSONKeys.DOCID);
                 jDoc.put( JSONKeys.NIMAGES, images.length );
                 response.setCharacterEncoding("UTF-8");
                 response.getWriter().println(jDoc.toJSONString());  

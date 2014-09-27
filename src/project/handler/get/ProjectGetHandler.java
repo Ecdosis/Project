@@ -40,6 +40,8 @@ public class ProjectGetHandler
                 new ProjectGetSponsors().handle(request,response,Utils.pop(urn) );
             else if ( first != null && first.equals(Service.LIST) )
                 new ProjectGetProjects().handle(request,response,Utils.pop(urn) );
+            else if ( first != null && first.equals(Service.EVENTS) )
+                new ProjectGetEvents().handle(request,response,Utils.pop(urn) );
             else if ( first.equals(Service.VIEW) )
                 new ProjectSiteView().handle(request,response,Utils.pop(urn) );
             else if ( first.equals(Service.DOCUMENTS) )

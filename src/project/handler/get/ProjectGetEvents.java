@@ -22,21 +22,48 @@ import calliope.core.constants.Database;
 import calliope.core.constants.JSONKeys;
 import calliope.core.database.Connection;
 import calliope.core.database.Connector;
+import calliope.core.date.FuzzyDate;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import project.exception.ProjectException;
-import org.json.simple.JSONObject;
 import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
+import project.exception.ProjectException;
+import java.util.HashMap;
 
 /**
- *
+ * Get a list of events for this project
  * @author desmond
  */
-public class ProjectGetDocuments 
+public class ProjectGetEvents
 {
+    static final HashMap<String,String> langMap;
+    static 
+    {
+        langMap = new HashMap<>();
+        langMap.put("italian","it");
+        langMap.put("italiano","it");
+        langMap.put("spanish","es");
+        langMap.put("español","es");
+        langMap.put("english","en");
+    }
     /**
-     * Get a list of document with a given docid prefix
+     * Get the language code
+     * @param urn the docid starting with a language name
+     * @return the 2-letter ISO language code
+     */
+    String getLangCode( String urn )
+    {
+        String[] parts = urn.split("/");
+        if ( parts.length>0 )
+        {
+            if ( ProjectGetEvents.langMap.containsKey(parts[0]) )
+                return ProjectGetEvents.langMap.get(parts[0]);
+        }
+        return "en";
+    }
+    /**
+     * Get a list of events with a given docid prefix
      * @param request the request
      * @param response the response
      * @param urn the docid prefix
@@ -49,26 +76,28 @@ public class ProjectGetDocuments
         {
             Connection conn = Connector.getConnection();
             // list documents *starting* with that urn
-            String[] docids = conn.listDocuments(Database.CORTEX, urn+".*",
-                JSONKeys.DOCID );
+            String[] docids = conn.listDocuments(Database.EVENTS, urn+".*", 
+                JSONKeys._ID );
             JSONObject jDoc = new JSONObject();
             JSONArray jArray = new JSONArray();
             for ( String docid : docids )
             {
-                String jStr = conn.getFromDb(Database.CORTEX,docid);
+                String jStr = conn.getFromDbByField(Database.EVENTS,
+                    docid,JSONKeys._ID);
                 if ( jStr != null )
                 {
                     JSONObject obj = (JSONObject)JSONValue.parse( jStr );
-                    JSONObject doc = new JSONObject();
-                    doc.put( JSONKeys.DOCID, docid );
-                    if ( obj.containsKey(JSONKeys.TITLE) )
-                        doc.put( JSONKeys.TITLE, obj.get(JSONKeys.TITLE) );
-                    if ( obj.containsKey(JSONKeys.DESCRIPTION) )
-                        doc.put( JSONKeys.DESCRIPTION, obj.get(JSONKeys.DESCRIPTION) );
-                    jArray.add( doc );
+                    if ( obj.containsKey("date") )
+                    {
+                        String langCode = getLangCode(urn);
+                        FuzzyDate fzd = new FuzzyDate((String)obj.get("date"),
+                            langCode);
+                        obj.put("date",JSONValue.parse(fzd.toJSON()));
+                    }
+                    jArray.add( obj );
                 }
             }
-            jDoc.put( JSONKeys.DOCUMENTS, jArray );
+            jDoc.put( JSONKeys.NEVENTS, jArray );
             response.setCharacterEncoding("UTF-8");
             response.getWriter().println(jDoc.toJSONString()); 
         }

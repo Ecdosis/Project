@@ -40,7 +40,8 @@ public class ProjectGetSponsors extends ProjectHandler
             Connection conn = Connector.getConnection();
             if ( conn != null )
             {
-                String[] jstr = conn.listDocuments( Database.CORPIX, "sponsors.*" );
+                String[] jstr = conn.listDocuments( Database.CORPIX, "sponsors.*",
+                    JSONKeys.DOCID);
                 JSONArray list = new JSONArray();
                 if ( jstr != null )
                 {

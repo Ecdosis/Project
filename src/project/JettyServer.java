@@ -44,6 +44,7 @@ public class JettyServer extends AbstractHandler
     static String password;
     static int dbPort;
     public static int wsPort;
+    
     /**
      * Main entry point
      * @param target the URN part of the URI

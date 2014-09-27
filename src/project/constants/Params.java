@@ -30,4 +30,6 @@ public class Params {
     public static final String WORK = "work";
     public static final String AUTHOR = "author";
     public static final String SITE_URL = "site_url";
+    public static final String EVENT = "event";
+    public static final String _ID = "_id";
 }
