@@ -26,16 +26,14 @@ public class ProjectPostEventHandler extends ProjectPostHandler
     {
         try
         {
-            System.out.println("Received POST to /project/events "+urn);
             parseImportParams( request );
-            if ( event == null )
-                System.out.println("event was null");
-            else
-                System.out.println("event:"+event);
             String first = Utils.first(urn);
             if ( first.equals(Service.DELETE) && this._id !=null )
+            {
                 Connector.getConnection().removeFromDbByField(
                     Database.EVENTS, JSONKeys._ID, this._id);
+                System.out.println("deleting id="+this._id);
+            }
             else if ( first.equals(Service.ADD) && event != null )
                 Connector.getConnection().addToDb( Database.EVENTS, event );
             else if ( first.equals(Service.UPDATE) )

@@ -52,6 +52,7 @@ public class ProjectPostHandler {
     ImageFile icon;
     void processField( String fieldName, String contents )
     {
+        System.out.println(fieldName+"="+contents);
         if ( fieldName.equals(Params.DOCID) )
         {
             int index = contents.lastIndexOf(".");
@@ -136,6 +137,7 @@ public class ProjectPostHandler {
             {
                 Map tbl = request.getParameterMap();
                 Set<String> keys = tbl.keySet();
+                System.out.println("Processing "+keys.size()+" params");
                 Iterator<String> iter = keys.iterator();
                 while ( iter.hasNext() )
                 {
