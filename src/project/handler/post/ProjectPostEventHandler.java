@@ -30,14 +30,25 @@ public class ProjectPostEventHandler extends ProjectPostHandler
             String first = Utils.first(urn);
             if ( first.equals(Service.DELETE) && this._id !=null )
             {
+                System.out.println("deleting id="+this._id);
                 Connector.getConnection().removeFromDbByField(
                     Database.EVENTS, JSONKeys._ID, this._id);
-                System.out.println("deleting id="+this._id);
+                System.out.println("deleted id="+this._id);
             }
             else if ( first.equals(Service.ADD) && event != null )
-                Connector.getConnection().addToDb( Database.EVENTS, event );
+            {
+                String resp = Connector.getConnection().addToDb( Database.EVENTS, event );
+                response.setCharacterEncoding("UTF-8");
+                response.getWriter().println(resp); 
+            }
             else if ( first.equals(Service.UPDATE) )
-                Connector.getConnection().addToDb( Database.EVENTS, event );
+            {
+                String resp = Connector.getConnection().addToDb( Database.EVENTS, event );                
+                response.setCharacterEncoding("UTF-8");
+                response.getWriter().println(resp); 
+            }
+            else
+                System.out.println("Unknown command "+first+" for urn="+urn);
         }
         catch ( Exception e )
         {

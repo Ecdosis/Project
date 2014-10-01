@@ -87,14 +87,8 @@ public class ProjectGetEvents
                 if ( jStr != null )
                 {
                     JSONObject obj = (JSONObject)JSONValue.parse( jStr );
-                    if ( obj.containsKey("date") )
-                    {
-                        String langCode = getLangCode(urn);
-                        FuzzyDate fzd = new FuzzyDate((String)obj.get("date"),
-                            langCode);
-                        obj.put("date",JSONValue.parse(fzd.toJSON()));
-                    }
-                    jArray.add( obj );
+                    if ( obj != null )
+                        jArray.add( obj );
                 }
             }
             jDoc.put( JSONKeys.NEVENTS, jArray );
