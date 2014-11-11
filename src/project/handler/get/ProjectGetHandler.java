@@ -21,6 +21,7 @@ package project.handler.get;
 import calliope.core.Utils;
 import project.exception.*;
 import project.constants.*;
+import project.handler.ProjectHandler;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -28,7 +29,7 @@ import javax.servlet.http.HttpServletResponse;
  * Get a project document from the database
  * @author desmond
  */
-public class ProjectGetHandler 
+public class ProjectGetHandler extends ProjectHandler
 {
     public void handle(HttpServletRequest request,
             HttpServletResponse response, String urn) throws ProjectException 

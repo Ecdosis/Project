@@ -49,13 +49,13 @@ public class ProjectGetDocuments
         {
             Connection conn = Connector.getConnection();
             // list documents *starting* with that urn
-            String[] docids = conn.listDocuments(Database.CORTEX, urn+".*",
+            String[] docids = conn.listDocuments(Database.METADATA, urn+".*",
                 JSONKeys.DOCID );
             JSONObject jDoc = new JSONObject();
             JSONArray jArray = new JSONArray();
             for ( String docid : docids )
             {
-                String jStr = conn.getFromDb(Database.CORTEX,docid);
+                String jStr = conn.getFromDb(Database.METADATA,docid);
                 if ( jStr != null )
                 {
                     JSONObject obj = (JSONObject)JSONValue.parse( jStr );
@@ -63,8 +63,12 @@ public class ProjectGetDocuments
                     doc.put( JSONKeys.DOCID, docid );
                     if ( obj.containsKey(JSONKeys.TITLE) )
                         doc.put( JSONKeys.TITLE, obj.get(JSONKeys.TITLE) );
-                    if ( obj.containsKey(JSONKeys.DESCRIPTION) )
-                        doc.put( JSONKeys.DESCRIPTION, obj.get(JSONKeys.DESCRIPTION) );
+                    if ( obj.containsKey(JSONKeys.SECTION) )
+                        doc.put( JSONKeys.SECTION, obj.get(JSONKeys.SECTION) );
+                    if ( obj.containsKey(JSONKeys.VERSION1) )
+                        doc.put( JSONKeys.VERSION1, obj.get(JSONKeys.VERSION1) );
+                    if ( obj.containsKey(JSONKeys.AUTHOR) )
+                        doc.put( JSONKeys.AUTHOR, obj.get(JSONKeys.AUTHOR) );
                     jArray.add( doc );
                 }
             }

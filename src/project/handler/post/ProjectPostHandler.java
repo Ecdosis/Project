@@ -24,6 +24,7 @@ import calliope.core.Utils;
 import project.exception.*;
 import project.constants.Service;
 import project.constants.Params;
+import project.handler.ProjectHandler;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.simple.*;
@@ -42,7 +43,8 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
  * Handle posting or saving of project data
  * @author desmond
  */
-public class ProjectPostHandler {
+public class ProjectPostHandler extends ProjectHandler
+{
     String docid;
     String description;
     String owner;
