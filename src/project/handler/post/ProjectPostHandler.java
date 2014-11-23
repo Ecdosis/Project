@@ -50,6 +50,8 @@ public class ProjectPostHandler extends ProjectHandler
     String owner;
     String siteUrl;
     String event;
+    String work;
+    String author;
     String _id;
     ImageFile icon;
     void processField( String fieldName, String contents )
@@ -72,6 +74,10 @@ public class ProjectPostHandler extends ProjectHandler
             this.event = contents;
         else if ( fieldName.equals(Params._ID) )
             this._id = contents;
+        else if ( fieldName.equals(Params.WORK))
+            this.work = contents;
+        else if ( fieldName.equals(Params.AUTHOR))
+            this.author = contents;
     }
 /**
      * Parse the import params from the request
@@ -175,40 +181,50 @@ public class ProjectPostHandler extends ProjectHandler
             {
                 parseImportParams( request );
                 JSONObject jDoc = new JSONObject();
-                jDoc.put(JSONKeys.DESCRIPTION, description);
                 Connection conn = Connector.getConnection();
                 String oldJDoc = conn.getFromDb( Database.PROJECTS, docid );
                 if ( oldJDoc != null )
                 {
                     JSONObject old = (JSONObject)JSONValue.parse( oldJDoc );
-                    if ( old.containsKey(JSONKeys.DESCRIPTION) )
-                    {
-                        String oldDesc = (String)old.get(JSONKeys.DESCRIPTION);
-                        if ( !oldDesc.equals(description) )
-                            jDoc.put( JSONKeys.DESCRIPTION, description );
-                    }
+                    if ( description != null && description.length()>0 )
+                        jDoc.put( JSONKeys.DESCRIPTION, description );
                     // should check the permissions of this
-                    String oldOwner = (String)old.get(JSONKeys.OWNER);
-                    if ( oldOwner != null && owner != null 
-                        && !oldOwner.equals(owner) )
+                    if ( owner != null && owner.length()>0 )
                         jDoc.put(JSONKeys.OWNER, owner );
+                    if ( siteUrl != null && siteUrl.length()>0 )
+                        jDoc.put(JSONKeys.URL, siteUrl );
+                    if ( work != null && work.length()>0 )
+                        jDoc.put(JSONKeys.WORK, work );
+                    if ( author != null && author.length()>0 )
+                        jDoc.put( JSONKeys.AUTHOR, author );
                     Set<String> keys = old.keySet();
                     for ( String key: keys )
                     {
                         if ( !key.equals(JSONKeys.OWNER) 
                             && !key.equals(JSONKeys.DESCRIPTION) 
-                            && !key.equals(JSONKeys.DOCID) 
-                            && !key.equals("_id") )
+                            && !key.equals(JSONKeys.DOCID))
                         {
                             Object obj = old.get( key );
                             jDoc.put( key, obj );
                         }
                     }
                 }
-                else if ( owner != null )
-                    jDoc.put(JSONKeys.OWNER, owner );
-                conn.putToDb( Database.PROJECTS, docid, 
-                    jDoc.toJSONString() );
+                else // create new
+                {
+                    if ( siteUrl != null )
+                        jDoc.put(JSONKeys.URL, siteUrl );
+                    if ( owner != null )
+                        jDoc.put(JSONKeys.OWNER, owner );
+                    if ( description != null )
+                        jDoc.put( JSONKeys.DESCRIPTION, description );
+                    jDoc.put( JSONKeys.DOCID, docid );
+                    String siteUrl;
+                    if ( work != null )
+                        jDoc.put(JSONKeys.WORK, work );
+                    if ( author != null )
+                        jDoc.put( JSONKeys.AUTHOR, author );
+                }
+                conn.putToDb( Database.PROJECTS, docid, jDoc.toJSONString() );
                 if ( icon != null )
                 {
                     String imageId =docid+"/project/"+JSONKeys.ICON;
