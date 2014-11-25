@@ -51,8 +51,6 @@ public class ProjectPostHandler extends ProjectHandler
     String owner;
     String siteUrl;
     String event;
-    String work;
-    String author;
     String _id;
     String source;
     ImageFile icon;
@@ -77,10 +75,6 @@ public class ProjectPostHandler extends ProjectHandler
             this.event = contents;
         else if ( fieldName.equals(Params._ID) )
             this._id = contents;
-        else if ( fieldName.equals(Params.WORK))
-            this.work = contents;
-        else if ( fieldName.equals(Params.AUTHOR))
-            this.author = contents;
         else if ( fieldName.equals("source"))
             this.source = contents;
     }
@@ -198,10 +192,6 @@ public class ProjectPostHandler extends ProjectHandler
                         jDoc.put(JSONKeys.OWNER, owner );
                     if ( siteUrl != null && siteUrl.length()>0 )
                         jDoc.put(JSONKeys.URL, siteUrl );
-                    if ( work != null && work.length()>0 )
-                        jDoc.put(JSONKeys.WORK, work );
-                    if ( author != null && author.length()>0 )
-                        jDoc.put( JSONKeys.AUTHOR, author );
                     Set<String> keys = old.keySet();
                     for ( String key: keys )
                     {
@@ -223,11 +213,8 @@ public class ProjectPostHandler extends ProjectHandler
                     if ( description != null )
                         jDoc.put( JSONKeys.DESCRIPTION, description );
                     jDoc.put( JSONKeys.DOCID, docid );
-                    String siteUrl;
-                    if ( work != null )
-                        jDoc.put(JSONKeys.WORK, work );
-                    if ( author != null )
-                        jDoc.put( JSONKeys.AUTHOR, author );
+                    if ( siteUrl != null && siteUrl.length()>0 )
+                        jDoc.put(JSONKeys.SITE_URL, siteUrl );
                 }
                 conn.putToDb( Database.PROJECTS, docid, jDoc.toJSONString() );
                 if ( icon != null )

@@ -34,44 +34,56 @@ import calliope.core.Utils;
  */
 public class ProjectGetOneProject 
 {
-    private String shorten( String urn )
-    {
-        String[] parts = urn.split("/");
-        if ( parts.length >= 2 )
-            return parts[0]+"/"+parts[1];
-        else
-            return urn;
-    }
+    static String BLANK_PROJECT = "english/anonymous";
     public void handle(HttpServletRequest request,
         HttpServletResponse response, String urn ) throws ProjectException
     {
         try
         {
-            Connection conn = Connector.getConnection();
-            String jstr = conn.getFromDb( Database.PROJECTS, urn );
-            if ( jstr != null )
+            JSONObject jDoc=null;
+            if ( urn.equals(BLANK_PROJECT) )
             {
-                JSONObject jDoc = (JSONObject)JSONValue.parse(jstr);
-                jDoc.put( JSONKeys.ICON, "/mml/"+Database.CORPIX+"/"+shorten(urn)
-                    +"/project/"+JSONKeys.ICON );
-                //System.out.println("pDoc.icon="+jDoc.get(JSONKeys.ICON));
-                String[] docs = conn.listDocuments(Database.CORTEX, urn+".*",
-                    JSONKeys.DOCID);
-                Long works = new Long(docs.length);
+                jDoc = new JSONObject();
+                jDoc.put( JSONKeys.ICON, "/mml/"+Database.CORPIX+"/"
+                    +BLANK_PROJECT+"/project/"+JSONKeys.ICON );
+                Long works = new Long(0);
                 jDoc.put( JSONKeys.NWORKS, works );
-                String[] events = conn.listDocuments(Database.EVENTS, 
-                    Utils.shortDocID(urn)+".*", JSONKeys.DOCID );
-                Long nEvents = new Long(events.length);
+                Long nEvents = new Long(0);
                 jDoc.put( JSONKeys.NEVENTS, nEvents );
-                String[] images = conn.listDocuments(Database.CORPIX, urn+".*",
-                    JSONKeys.DOCID);
-                jDoc.put( JSONKeys.NIMAGES, images.length );
+                jDoc.put( JSONKeys.NIMAGES, 0 );
+                jDoc.put( JSONKeys.DOCID, "english/anonymous");
+            }
+            else if ( urn.length() > 0 )
+            {
+                Connection conn = Connector.getConnection();
+                String jstr = conn.getFromDb( Database.PROJECTS, urn );
+                if ( jstr != null )
+                {
+                    jDoc = (JSONObject)JSONValue.parse(jstr);
+                    jDoc.put( JSONKeys.ICON, "/mml/"+Database.CORPIX+"/"
+                        +Utils.shortDocID(urn)+"/project/"+JSONKeys.ICON );
+                    //System.out.println("pDoc.icon="+jDoc.get(JSONKeys.ICON));
+                    String[] docs = conn.listDocuments(Database.CORTEX, 
+                        urn+".*", JSONKeys.DOCID);
+                    Long works = new Long(docs.length);
+                    jDoc.put( JSONKeys.NWORKS, works );
+                    String[] events = conn.listDocuments(Database.EVENTS, 
+                        Utils.shortDocID(urn)+".*", JSONKeys.DOCID );
+                    Long nEvents = new Long(events.length);
+                    jDoc.put( JSONKeys.NEVENTS, nEvents );
+                    String[] images = conn.listDocuments(Database.CORPIX, 
+                        urn+".*", JSONKeys.DOCID);
+                    jDoc.put( JSONKeys.NIMAGES, images.length );
+                }
+                else 
+                    throw new Exception("failed to find project "+urn);
+            }
+            if ( jDoc != null )
+            {
                 response.setContentType("application/json");
                 response.setCharacterEncoding("UTF-8");
                 response.getWriter().println(jDoc.toJSONString());  
             }
-            else 
-                throw new Exception("failed to find project "+urn);
         }
         catch ( Exception e )
         {
