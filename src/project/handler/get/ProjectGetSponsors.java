@@ -58,6 +58,7 @@ public class ProjectGetSponsors extends ProjectHandler
                         }
                     }
                 }
+                response.setContentType("application/json");
                 response.setCharacterEncoding("UTF-8");
                 response.getWriter().println(list.toJSONString());
             }

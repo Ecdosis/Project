@@ -19,6 +19,11 @@ package project.handler;
 import project.exception.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import calliope.core.database.*;
+import calliope.core.constants.Database;
+import calliope.core.constants.JSONKeys;
+import org.json.simple.*;
+import calliope.core.Utils;
 
 /**
  * Handle a DELETE request
@@ -29,6 +34,34 @@ public class ProjectDeleteHandler extends ProjectHandler
     public void handle( HttpServletRequest request, 
         HttpServletResponse response, String urn ) throws ProjectException
     {
-        System.out.println("DELETE");
+        try
+        {
+            String referer = request.getHeader("Referer");
+            if ( referer != null )
+            {
+                int qPos = referer.indexOf("?");
+                if ( qPos != -1 )
+                    referer = referer.substring( 0, qPos );
+                int slashPos = referer.lastIndexOf("/");
+                if ( slashPos != -1 )
+                    referer = referer.substring(0,slashPos);
+            }
+            Connection conn = Connector.getConnection();
+            String jDoc = conn.getFromDb(Database.PROJECTS,urn);
+            if ( jDoc != null )
+            {
+                JSONObject jObj = (JSONObject)JSONValue.parse(jDoc);
+                String imgID = Utils.shortDocID(urn);
+                imgID += "/project/icon";
+                conn.removeImageFromDb(Database.CORPIX, imgID );
+                conn.removeFromDb(Database.PROJECTS, urn);
+            }
+            if ( referer != null )
+                response.sendRedirect(referer);
+        }
+        catch ( Exception e )
+        {
+            throw new ProjectException(e);
+        }
     }
 }

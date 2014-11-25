@@ -34,6 +34,14 @@ import calliope.core.Utils;
  */
 public class ProjectGetOneProject 
 {
+    private String shorten( String urn )
+    {
+        String[] parts = urn.split("/");
+        if ( parts.length >= 2 )
+            return parts[0]+"/"+parts[1];
+        else
+            return urn;
+    }
     public void handle(HttpServletRequest request,
         HttpServletResponse response, String urn ) throws ProjectException
     {
@@ -44,8 +52,9 @@ public class ProjectGetOneProject
             if ( jstr != null )
             {
                 JSONObject jDoc = (JSONObject)JSONValue.parse(jstr);
-                jDoc.put( JSONKeys.ICON, "/mml/"+Database.CORPIX+"/"+urn
+                jDoc.put( JSONKeys.ICON, "/mml/"+Database.CORPIX+"/"+shorten(urn)
                     +"/project/"+JSONKeys.ICON );
+                //System.out.println("pDoc.icon="+jDoc.get(JSONKeys.ICON));
                 String[] docs = conn.listDocuments(Database.CORTEX, urn+".*",
                     JSONKeys.DOCID);
                 Long works = new Long(docs.length);
@@ -57,6 +66,7 @@ public class ProjectGetOneProject
                 String[] images = conn.listDocuments(Database.CORPIX, urn+".*",
                     JSONKeys.DOCID);
                 jDoc.put( JSONKeys.NIMAGES, images.length );
+                response.setContentType("application/json");
                 response.setCharacterEncoding("UTF-8");
                 response.getWriter().println(jDoc.toJSONString());  
             }

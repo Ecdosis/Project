@@ -55,6 +55,7 @@ public class ProjectGetProjects
                     jProjs.add( jDoc );
                 }
             }
+            response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
             response.getWriter().println(jProjs.toJSONString());
         }

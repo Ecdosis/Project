@@ -46,6 +46,7 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 public class ProjectPostHandler extends ProjectHandler
 {
     String docid;
+    String shortid;
     String description;
     String owner;
     String siteUrl;
@@ -53,6 +54,7 @@ public class ProjectPostHandler extends ProjectHandler
     String work;
     String author;
     String _id;
+    String source;
     ImageFile icon;
     void processField( String fieldName, String contents )
     {
@@ -63,6 +65,7 @@ public class ProjectPostHandler extends ProjectHandler
             if ( index != -1 )
                 contents = contents.substring(0,index);
             docid = contents;
+            shortid = Utils.shortDocID( docid );
         }
         else if ( fieldName.equals(Params.OWNER) )
             this.owner = contents;
@@ -78,6 +81,8 @@ public class ProjectPostHandler extends ProjectHandler
             this.work = contents;
         else if ( fieldName.equals(Params.AUTHOR))
             this.author = contents;
+        else if ( fieldName.equals("source"))
+            this.source = contents;
     }
 /**
      * Parse the import params from the request
@@ -227,7 +232,7 @@ public class ProjectPostHandler extends ProjectHandler
                 conn.putToDb( Database.PROJECTS, docid, jDoc.toJSONString() );
                 if ( icon != null )
                 {
-                    String imageId =docid+"/project/"+JSONKeys.ICON;
+                    String imageId =shortid+"/project/"+JSONKeys.ICON;
                     try
                     {
                         conn.removeImageFromDb( Database.CORPIX, imageId );
@@ -241,6 +246,8 @@ public class ProjectPostHandler extends ProjectHandler
                             icon.getHeight(), icon.type );
                 }
             }
+            if ( source != null )
+                response.sendRedirect(source);
         }
         catch ( Exception e )
         {
