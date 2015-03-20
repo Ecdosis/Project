@@ -30,6 +30,9 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import project.exception.ProjectException;
 import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Locale;
+import java.util.Arrays;
 
 /**
  * Get a list of events for this project
@@ -62,6 +65,14 @@ public class ProjectGetEvents
         }
         return "en";
     }
+    private Locale localeFromDocid( String docid )
+    {
+        String[] parts = docid.split("/");
+        if ( parts.length>0 )
+            return new Locale(langMap.get(parts[0]));
+        else
+            return Locale.getDefault();
+    }
     /**
      * Get a list of events with a given docid prefix
      * @param request the request
@@ -80,19 +91,32 @@ public class ProjectGetEvents
                 JSONKeys._ID );
             JSONObject jDoc = new JSONObject();
             JSONArray jArray = new JSONArray();
+            ArrayList<DateHolder> dates = new ArrayList<DateHolder>();
             for ( String docid : docids )
             {
                 String jStr = conn.getFromDbByField(Database.EVENTS,
                     docid,JSONKeys._ID);
                 if ( jStr != null )
                 {
-                    JSONObject obj = (JSONObject)JSONValue.parse( jStr );
-                    if ( obj != null )
-                        jArray.add( obj );
+                    JSONObject jobj = (JSONObject)JSONValue.parse( jStr );
+                    if ( jobj != null && ((JSONObject)jobj).get("date")!= null )
+                    {
+                        FuzzyDate fd = FuzzyDate.fromJSON(
+                            (JSONObject)jobj.get("date"),
+                            localeFromDocid((String)jobj.get(JSONKeys.DOCID)));
+                        dates.add( new DateHolder(fd,jobj) );
+                    }
                 }
             }
+            // sort the jArray by fuzzydate
+            DateHolder[] dhArray = new DateHolder[dates.size()];
+            dates.toArray( dhArray );
+            Arrays.sort( dhArray );
+            for ( int i=0;i<dhArray.length;i++ )
+                jArray.add( dhArray[i].jobj );
             jDoc.put( JSONKeys.NEVENTS, jArray );
             response.setCharacterEncoding("UTF-8");
+            response.setContentType("application/json");
             response.getWriter().println(jDoc.toJSONString()); 
         }
         catch ( Exception e )
