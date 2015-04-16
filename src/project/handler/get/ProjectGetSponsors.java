@@ -21,6 +21,7 @@ import calliope.core.constants.Database;
 import calliope.core.constants.JSONKeys;
 import calliope.core.database.Connection;
 import calliope.core.database.Connector;
+import calliope.core.image.Corpix;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import project.exception.ProjectException;
@@ -37,31 +38,26 @@ public class ProjectGetSponsors extends ProjectHandler
     {
         try
         {
-            Connection conn = Connector.getConnection();
-            if ( conn != null )
+            String[] jstr = Corpix.listImages( "sponsors" );
+            JSONArray list = new JSONArray();
+            if ( jstr != null )
             {
-                String[] jstr = conn.listDocuments( Database.CORPIX, "sponsors.*",
-                    JSONKeys.DOCID);
-                JSONArray list = new JSONArray();
-                if ( jstr != null )
+                for ( String docid: jstr )
                 {
-                    for ( String docid: jstr )
+                    String md = Corpix.getMetaData( docid );
+                    if ( md != null )
                     {
-                        String md = conn.getMetadata( Database.CORPIX, docid );
-                        if ( md != null )
-                        {
-                            JSONObject obj = (JSONObject)JSONValue.parse(md);
-                            // assume the MML service is running
-                            // maybe a bad idea
-                            obj.put(JSONKeys.IMAGE, "/mml/corpix/"+docid);
-                            list.add( obj );
-                        }
+                        JSONObject obj = (JSONObject)JSONValue.parse(md);
+                        // assume the MML service is running
+                        // maybe a bad idea
+                        obj.put(JSONKeys.IMAGE, "/corpix/"+docid);
+                        list.add( obj );
                     }
                 }
-                response.setContentType("application/json");
-                response.setCharacterEncoding("UTF-8");
-                response.getWriter().println(list.toJSONString());
             }
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().println(list.toJSONString());
         }
         catch ( Exception e )
         {

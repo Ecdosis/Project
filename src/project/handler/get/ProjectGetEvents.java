@@ -22,7 +22,6 @@ import calliope.core.constants.Database;
 import calliope.core.constants.JSONKeys;
 import calliope.core.database.Connection;
 import calliope.core.database.Connector;
-import calliope.core.date.FuzzyDate;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONArray;
@@ -40,7 +39,7 @@ public class ProjectGetEvents
     static final HashMap<String,String> langMap;
     static 
     {
-        langMap = new HashMap<>();
+        langMap = new HashMap<String,String>();
         langMap.put("italian","it");
         langMap.put("italiano","it");
         langMap.put("spanish","es");
@@ -92,6 +91,7 @@ public class ProjectGetEvents
                 }
             }
             jDoc.put( JSONKeys.NEVENTS, jArray );
+            response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
             response.getWriter().println(jDoc.toJSONString()); 
         }

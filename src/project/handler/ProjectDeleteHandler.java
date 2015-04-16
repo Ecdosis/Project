@@ -20,8 +20,8 @@ import project.exception.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import calliope.core.database.*;
-import calliope.core.constants.Database;
 import calliope.core.constants.JSONKeys;
+import calliope.core.constants.Database;
 import org.json.simple.*;
 import calliope.core.Utils;
 
@@ -36,28 +36,19 @@ public class ProjectDeleteHandler extends ProjectHandler
     {
         try
         {
-            String referer = request.getHeader("Referer");
-            if ( referer != null )
-            {
-                int qPos = referer.indexOf("?");
-                if ( qPos != -1 )
-                    referer = referer.substring( 0, qPos );
-                int slashPos = referer.lastIndexOf("/");
-                if ( slashPos != -1 )
-                    referer = referer.substring(0,slashPos);
-            }
             Connection conn = Connector.getConnection();
             String jDoc = conn.getFromDb(Database.PROJECTS,urn);
             if ( jDoc != null )
             {
-                JSONObject jObj = (JSONObject)JSONValue.parse(jDoc);
-                String imgID = Utils.shortDocID(urn);
-                imgID += "/project/icon";
-                conn.removeImageFromDb(Database.CORPIX, imgID );
+                String shortId = Utils.shortDocID(urn);
+                String imgId = shortId + "/project/icon";
+                if ( !imgId.equals("english/anonymous/project/icon") )
+                    conn.removeImageFromDb(Database.CORPIX, imgId );
+                // remove all events starting with the project short id
+                conn.removeFromDbByExpr(Database.EVENTS, JSONKeys.DOCID, 
+                    shortId+".*");
                 conn.removeFromDb(Database.PROJECTS, urn);
             }
-            if ( referer != null )
-                response.sendRedirect(referer);
         }
         catch ( Exception e )
         {

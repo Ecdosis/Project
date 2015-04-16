@@ -73,6 +73,7 @@ public class ProjectGetDocuments
                 }
             }
             jDoc.put( JSONKeys.DOCUMENTS, jArray );
+            response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
             response.getWriter().println(jDoc.toJSONString()); 
         }

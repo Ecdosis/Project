@@ -46,17 +46,19 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 public class ProjectPostHandler extends ProjectHandler
 {
     String docid;
+    String author;
+    String work;
     String shortid;
     String description;
     String owner;
+    String language;
     String siteUrl;
-    String event;
-    String _id;
     String source;
+    String _id;
+    String event;
     ImageFile icon;
     void processField( String fieldName, String contents )
     {
-        System.out.println(fieldName+"="+contents);
         if ( fieldName.equals(Params.DOCID) )
         {
             int index = contents.lastIndexOf(".");
@@ -65,19 +67,26 @@ public class ProjectPostHandler extends ProjectHandler
             docid = contents;
             shortid = Utils.shortDocID( docid );
         }
+        // these two needed by subclass
+        else if ( fieldName.equals(Params.EVENT) )
+            this.event = contents;
+        else if ( fieldName.equals(Params._ID) )
+            this._id = contents;
+        else if ( fieldName.equals(Params.LANGUAGE) )
+            this.language = contents;
         else if ( fieldName.equals(Params.OWNER) )
             this.owner = contents;
         else if ( fieldName.equals(Params.DESCRIPTION) )
             this.description = contents; 
         else if ( fieldName.equals(Params.SITE_URL) )
             this.siteUrl = contents;
-        else if ( fieldName.equals(Params.EVENT) )
-            this.event = contents;
-        else if ( fieldName.equals(Params._ID) )
-            this._id = contents;
         else if ( fieldName.equals("source"))
             this.source = contents;
-    }
+        else if ( fieldName.equals("author"))
+            this.author = contents;
+        else if ( fieldName.equals("work"))
+            this.work = contents;
+   }
 /**
      * Parse the import params from the request
      * @param request the http request
@@ -144,7 +153,6 @@ public class ProjectPostHandler extends ProjectHandler
             {
                 Map tbl = request.getParameterMap();
                 Set<String> keys = tbl.keySet();
-                System.out.println("Processing "+keys.size()+" params");
                 Iterator<String> iter = keys.iterator();
                 while ( iter.hasNext() )
                 {
@@ -179,47 +187,32 @@ public class ProjectPostHandler extends ProjectHandler
             else
             {
                 parseImportParams( request );
-                JSONObject jDoc = new JSONObject();
+                JSONObject jDoc;
                 Connection conn = Connector.getConnection();
                 String oldJDoc = conn.getFromDb( Database.PROJECTS, docid );
                 if ( oldJDoc != null )
-                {
-                    JSONObject old = (JSONObject)JSONValue.parse( oldJDoc );
-                    if ( description != null && description.length()>0 )
-                        jDoc.put( JSONKeys.DESCRIPTION, description );
-                    // should check the permissions of this
-                    if ( owner != null && owner.length()>0 )
-                        jDoc.put(JSONKeys.OWNER, owner );
-                    if ( siteUrl != null && siteUrl.length()>0 )
-                        jDoc.put(JSONKeys.URL, siteUrl );
-                    Set<String> keys = old.keySet();
-                    for ( String key: keys )
-                    {
-                        if ( !key.equals(JSONKeys.OWNER) 
-                            && !key.equals(JSONKeys.DESCRIPTION) 
-                            && !key.equals(JSONKeys.DOCID))
-                        {
-                            Object obj = old.get( key );
-                            jDoc.put( key, obj );
-                        }
-                    }
-                }
-                else // create new
-                {
-                    if ( siteUrl != null )
-                        jDoc.put(JSONKeys.URL, siteUrl );
-                    if ( owner != null )
-                        jDoc.put(JSONKeys.OWNER, owner );
-                    if ( description != null )
-                        jDoc.put( JSONKeys.DESCRIPTION, description );
-                    jDoc.put( JSONKeys.DOCID, docid );
-                    if ( siteUrl != null && siteUrl.length()>0 )
-                        jDoc.put(JSONKeys.SITE_URL, siteUrl );
-                }
+                    jDoc = (JSONObject)JSONValue.parse(oldJDoc);
+                else
+                    jDoc = new JSONObject();
+                if ( description != null && description.length()>0 )
+                    jDoc.put( JSONKeys.DESCRIPTION, description );
+                // should check the permissions of this
+                if ( owner != null && owner.length()>0 )
+                    jDoc.put(JSONKeys.OWNER, owner );
+                if ( siteUrl != null && siteUrl.length()>0 )
+                    jDoc.put(JSONKeys.SITE_URL, siteUrl );
+                if ( author != null && author.length()>0 )
+                    jDoc.put(JSONKeys.AUTHOR, author );
+                if ( work != null && work.length()>0 )
+                    jDoc.put(JSONKeys.WORK, work );
+                if ( docid != null && docid.length()>0 )
+                    jDoc.put(JSONKeys.DOCID, docid );
+                if ( language != null && language.length()>0 )
+                    jDoc.put(JSONKeys.LANGUAGE, language );
                 conn.putToDb( Database.PROJECTS, docid, jDoc.toJSONString() );
                 if ( icon != null )
                 {
-                    String imageId =shortid+"/project/"+JSONKeys.ICON;
+                    String imageId = shortid+"/project/"+JSONKeys.ICON;
                     try
                     {
                         conn.removeImageFromDb( Database.CORPIX, imageId );
@@ -229,8 +222,7 @@ public class ProjectPostHandler extends ProjectHandler
                         // ignore if not there
                     }
                     conn.putImageToDb( Database.CORPIX, imageId,icon.getData(), 
-                        icon.getWidth(), 
-                            icon.getHeight(), icon.type );
+                        icon.getWidth(), icon.getHeight(), icon.type );
                 }
             }
             if ( source != null )

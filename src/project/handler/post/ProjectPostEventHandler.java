@@ -28,11 +28,17 @@ import project.constants.Service;
  */
 public class ProjectPostEventHandler extends ProjectPostHandler
 {
-    /** all eventIDs for the given prefix */
+    /** all eventIDs for the given prefix (event+number)*/
     static HashMap<String,HashSet<String>> eventIDs;
     static int CACHE_SIZE = 20;
+    /** a list of event+number ids that are free to use */
     static HashMap<String,ArrayList<String>> freeIDs;
-    private void init() throws EventException
+    /**
+     * Initialise the map for a particular docid
+     * @param did the docid
+     * @throws EventException 
+     */
+    private void init(String did) throws EventException
     {
         if ( eventIDs == null )
         {
@@ -41,13 +47,13 @@ public class ProjectPostEventHandler extends ProjectPostHandler
         }
         try
         {
-            if ( !eventIDs.containsKey(this.docid) )
+            if ( !eventIDs.containsKey(did) )
             {
                 Connection conn = Connector.getConnection();
                 String[] docids = conn.listDocuments(Database.EVENTS,
-                    this.docid+".*","docid");
+                    did+".*","docid");
                 HashSet map = new HashSet<String>();
-                eventIDs.put( this.docid, map );
+                eventIDs.put( did, map );
                 for ( int i=0;i<docids.length;i++ )
                 {
                     if ( checkDocID(docids[i]) )
@@ -57,6 +63,8 @@ public class ProjectPostEventHandler extends ProjectPostHandler
                     }
                 }
             }
+            if ( ( !freeIDs.containsKey(did)) )
+                freeIDs.put(did,new ArrayList<String>());
         }
         catch ( Exception e )
         {
@@ -90,15 +98,16 @@ public class ProjectPostEventHandler extends ProjectPostHandler
     }
     /**
      * Issue a new unique eventid
+     * @param did the docid for this event, minus number at the end
      * @return a string starting with "event" and ending with a number
      */
-    String uniqueEventID() throws EventException
+    String uniqueEventID(String did) throws EventException
     {
-        this.init();
-        ArrayList free = freeIDs.get(this.docid);
+        this.init(did);
+        ArrayList free = freeIDs.get(did);
         if ( free.isEmpty() )
         {
-            HashSet items = eventIDs.get(this.docid);
+            HashSet items = eventIDs.get(did);
             int limit = items.size()+CACHE_SIZE;
             int count = 0;
             for ( int i=1;i<=limit;i++ )
@@ -106,16 +115,15 @@ public class ProjectPostEventHandler extends ProjectPostHandler
                 String key = "event"+i;
                 if ( !items.contains(key) )
                 {
-                    items.add(key);
+                    free.add(key);
                     count++;
                     if ( count >= CACHE_SIZE )
                         break;
                 }
             }
         }
-        int last = free.size()-1;
-        String uniqueID = (String)free.get(last);
-        free.remove(last);
+        String uniqueID = (String)free.get(0);
+        free.remove(0);
         return uniqueID;
     }
     /**
@@ -129,7 +137,7 @@ public class ProjectPostEventHandler extends ProjectPostHandler
         String did = (String) evt.get("docid");
         if ( !checkDocID(did) )
         {
-            did = this.docid + uniqueEventID();
+            did += "/"+uniqueEventID(did);
             evt.put("docid",did);
         }
         return evt.toJSONString();
@@ -154,13 +162,14 @@ public class ProjectPostEventHandler extends ProjectPostHandler
                     if ( did != null && checkDocID(did) )
                     {
                         String[] parts = did.split("/");
-                        ArrayList<String> list = freeIDs.get(this.docid);
+                        String sid = Utils.shortDocID(did);
+                        this.init(sid);
+                        ArrayList<String> list = freeIDs.get(sid);
                         list.add( parts[parts.length-1] );
                     }
                 }
                 conn.removeFromDbByField(
                     Database.EVENTS, JSONKeys._ID, this._id);
-                
                 System.out.println("deleted id="+this._id);
             }
             else if ( first.equals(Service.ADD) && event != null )
@@ -168,13 +177,20 @@ public class ProjectPostEventHandler extends ProjectPostHandler
                 event = checkEvent( event );
                 String resp = Connector.getConnection().addToDb( 
                     Database.EVENTS, event );
+                response.setContentType("application/json");
                 response.setCharacterEncoding("UTF-8");
                 response.getWriter().println(resp); 
             }
             else if ( first.equals(Service.UPDATE) )
             {
+                event = checkEvent(event);
                 String resp = Connector.getConnection().addToDb( 
-                    Database.EVENTS, event );                
+                    Database.EVENTS, event );
+                JSONObject cObj = (JSONObject)JSONValue.parse(event);
+                JSONObject jObj = (JSONObject)JSONValue.parse(resp);
+                jObj.put( "docid",(String)cObj.get("docid") );
+                resp = jObj.toJSONString();
+                response.setContentType("application/json");
                 response.setCharacterEncoding("UTF-8");
                 response.getWriter().println(resp); 
             }
