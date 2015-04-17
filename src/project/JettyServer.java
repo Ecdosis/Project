@@ -104,7 +104,7 @@ public class JettyServer extends AbstractHandler
         boolean sane = true;
         try
         {
-            wsPort = 8084;
+            wsPort = 8085;
             host = "localhost";
             Repository repository = Repository.MONGO;
             for ( int i=0;i<args.length;i++ )
@@ -135,7 +135,7 @@ public class JettyServer extends AbstractHandler
                     break;
             }
             Connector.init( repository, user, 
-                password, host, dbPort, wsPort, "/var/www" );
+                password, host, "calliope", dbPort, wsPort, "/var/www" );
         }
         catch ( Exception e )
         {

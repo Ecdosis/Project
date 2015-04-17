@@ -2,6 +2,33 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+<<<<<<< HEAD
         <group/>
+=======
+        <group>
+            <file>file:/home/desmond/NetBeansProjects/Project/src/project/handler/get/ProjectSiteView.java</file>
+            <file>file:/home/desmond/NetBeansProjects/Project/src/project/handler/ProjectPutHandler.java</file>
+            <file>file:/home/desmond/NetBeansProjects/Project/src/project/handler/ByteHolder.java</file>
+            <file>file:/home/desmond/NetBeansProjects/Project/src/project/constants/Service.java</file>
+            <file>file:/home/desmond/NetBeansProjects/Project/src/project/handler/get/ProjectGetEvents.java</file>
+            <file>file:/home/desmond/NetBeansProjects/Project/src/project/ProjectWebApp.java</file>
+            <file>file:/home/desmond/NetBeansProjects/Project/src/project/handler/get/ProjectGetOneProject.java</file>
+            <file>file:/home/desmond/NetBeansProjects/Project/src/project/handler/post/ByteHolder.java</file>
+            <file>file:/home/desmond/NetBeansProjects/Project/src/project/JettyServer.java</file>
+            <file>file:/home/desmond/NetBeansProjects/Project/src/project/handler/ProjectDeleteHandler.java</file>
+            <file>file:/home/desmond/NetBeansProjects/Project/src/project/handler/get/ProjectGetSponsors.java</file>
+            <file>file:/home/desmond/NetBeansProjects/Project/src/project/handler/post/ProjectPostEventHandler.java</file>
+            <file>file:/home/desmond/NetBeansProjects/Project/src/project/constants/Params.java</file>
+            <file>file:/home/desmond/NetBeansProjects/Project/src/project/handler/post/ImageFile.java</file>
+            <file>file:/home/desmond/NetBeansProjects/Project/src/project/handler/get/ProjectGetProjects.java</file>
+            <file>file:/home/desmond/NetBeansProjects/Project/src/project/handler/post/ProjectPostHandler.java</file>
+            <file>file:/home/desmond/NetBeansProjects/Project/src/project/handler/get/ProjectGetDocuments.java</file>
+            <file>file:/home/desmond/NetBeansProjects/Project/src/project/exception/ProjectImageException.java</file>
+            <file>file:/home/desmond/NetBeansProjects/Project/src/project/handler/get/ProjectGetHandler.java</file>
+            <file>file:/home/desmond/NetBeansProjects/Project/src/project/handler/ProjectHandler.java</file>
+            <file>file:/home/desmond/NetBeansProjects/Project/src/project/handler/ImageFile.java</file>
+            <file>file:/home/desmond/NetBeansProjects/Project/src/project/JettyServerThread.java</file>
+        </group>
+>>>>>>> 42caf14c27e4fdfd437f055939f5d8dfbbd35c1a
     </open-files>
 </project-private>

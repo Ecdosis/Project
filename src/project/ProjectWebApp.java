@@ -103,7 +103,7 @@ public class ProjectWebApp extends HttpServlet
                         host = value;
                 }
                 Connector.init( repository, user, 
-                    password, host, dbPort, wsPort, webRoot );
+                    password, host, "calliope", dbPort, wsPort, webRoot );
             }
             target = Utils.pop( target );
             ProjectHandler handler;
