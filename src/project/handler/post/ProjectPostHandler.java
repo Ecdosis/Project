@@ -21,6 +21,8 @@ package project.handler.post;
 import calliope.core.constants.JSONKeys;
 import calliope.core.database.*;
 import calliope.core.Utils;
+import calliope.core.image.Corpix;
+import project.ProjectWebApp;
 import project.exception.*;
 import project.constants.Service;
 import project.constants.Params;
@@ -215,14 +217,13 @@ public class ProjectPostHandler extends ProjectHandler
                     String imageId = shortid+"/project/"+JSONKeys.ICON;
                     try
                     {
-                        conn.removeImageFromDb( Database.CORPIX, imageId );
+                        Corpix.addImage( ProjectWebApp.webRoot, imageId, 
+                            icon.type, icon.getData() );
                     }
                     catch ( Exception e )
                     {
                         // ignore if not there
                     }
-                    conn.putImageToDb( Database.CORPIX, imageId,icon.getData(), 
-                        icon.getWidth(), icon.getHeight(), icon.type );
                 }
             }
             if ( source != null )

@@ -32,4 +32,7 @@ public class Params {
     public static final String SITE_URL = "site_url";
     public static final String EVENT = "event";
     public static final String _ID = "_id";
+    public static String EVENT_TYPE = "event_type";
+    public final static String TITLE = "title";
+    public final static String SUBTITLE = "subtitle";
 }

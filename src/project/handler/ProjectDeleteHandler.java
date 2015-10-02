@@ -22,8 +22,9 @@ import javax.servlet.http.HttpServletResponse;
 import calliope.core.database.*;
 import calliope.core.constants.JSONKeys;
 import calliope.core.constants.Database;
-import org.json.simple.*;
+import calliope.core.image.Corpix;
 import calliope.core.Utils;
+import project.ProjectWebApp;
 
 /**
  * Handle a DELETE request
@@ -43,7 +44,7 @@ public class ProjectDeleteHandler extends ProjectHandler
                 String shortId = Utils.shortDocID(urn);
                 String imgId = shortId + "/project/icon";
                 if ( !imgId.equals("english/anonymous/project/icon") )
-                    conn.removeImageFromDb(Database.CORPIX, imgId );
+                    Corpix.deleteImage(ProjectWebApp.webRoot, imgId );
                 // remove all events starting with the project short id
                 conn.removeFromDbByExpr(Database.EVENTS, JSONKeys.DOCID, 
                     shortId+".*");

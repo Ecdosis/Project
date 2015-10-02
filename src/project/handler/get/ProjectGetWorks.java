@@ -15,47 +15,46 @@
  *  along with Project.  If not, see <http://www.gnu.org/licenses/>.
  *  (c) copyright Desmond Schmidt 2014
  */
-
 package project.handler.get;
+
+import calliope.core.constants.Database;
 import calliope.core.constants.JSONKeys;
-import calliope.core.image.Corpix;
+import calliope.core.database.Connection;
+import calliope.core.database.Connector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 import project.exception.ProjectException;
-import project.handler.ProjectHandler;
-import org.json.simple.*;
-import project.ProjectWebApp;
+
 /**
- * Handle a request for a list of sponsors in corpix.files/sponsors
+ * Get  list of works and info about them in JSON format
  * @author desmond
  */
-public class ProjectGetSponsors extends ProjectHandler 
+public class ProjectGetWorks extends ProjectGetHandler
 {
-    public void handle(HttpServletRequest request,
-        HttpServletResponse response, String urn) throws ProjectException 
+    public void handle( HttpServletRequest request, 
+        HttpServletResponse response, String urn ) throws ProjectException
     {
         try
         {
-            String[] jstr = Corpix.listImages( ProjectWebApp.webRoot, "sponsors" );
-            JSONArray list = new JSONArray();
-            if ( jstr != null )
+            Connection conn = Connector.getConnection();
+            String[] works = conn.listCollection(Database.WORKS );
+            JSONArray jWorks = new JSONArray();
+            for ( String work: works )
             {
-                for ( String docid: jstr )
+                String jstr = conn.getFromDb( Database.WORKS, work );
+                if ( jstr != null )
                 {
-                    String md = Corpix.getMetaData( ProjectWebApp.webRoot, docid );
-                    if ( md != null )
-                    {
-                        JSONObject obj = (JSONObject)JSONValue.parse(md);
-                        // assume the MML service is running
-                        // maybe a bad idea
-                        obj.put(JSONKeys.IMAGE, "/corpix/"+docid);
-                        list.add( obj );
-                    }
+                    JSONObject jDoc = (JSONObject)JSONValue.parse(jstr);
+                    jDoc.remove(JSONKeys._ID);
+                    jWorks.add( jDoc );
                 }
             }
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
-            response.getWriter().println(list.toJSONString());
+            response.getWriter().println(jWorks.toJSONString());
         }
         catch ( Exception e )
         {

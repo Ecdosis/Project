@@ -43,10 +43,16 @@ public class ProjectGetHandler extends ProjectHandler
                 new ProjectGetProjects().handle(request,response,Utils.pop(urn) );
             else if ( first != null && first.equals(Service.EVENTS) )
                 new ProjectGetEvents().handle(request,response,Utils.pop(urn) );
+            else if ( first != null && first.equals(Service.BIOGRAPHY) )
+                new ProjectGetBiography().handle(request,response,Utils.pop(urn) );
+            else if ( first != null && first.equals(Service.TIMELINE) )
+                new ProjectGetTimeline().handle(request,response,Utils.pop(urn) );
             else if ( first.equals(Service.VIEW) )
                 new ProjectSiteView().handle(request,response,Utils.pop(urn) );
             else if ( first.equals(Service.DOCUMENTS) )
                 new ProjectGetDocuments().handle(request,response,Utils.pop(urn) );
+            else if ( first.equals(Service.WORKS) )
+                new ProjectGetWorks().handle(request,response,Utils.pop(urn) );
             else    // user wants a specific project
                 new ProjectGetOneProject().handle(request,response,urn);
         } 

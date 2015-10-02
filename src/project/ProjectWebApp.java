@@ -32,7 +32,7 @@ public class ProjectWebApp extends HttpServlet
     static String password = "jabberw0cky";
     static int dbPort = 27017;
     public static int wsPort = 8080;
-    static String webRoot = "/var/www";
+    public static String webRoot = "/var/www";
     Repository repository = Repository.MONGO;
     /**
      * Safely convert a string to an integer
