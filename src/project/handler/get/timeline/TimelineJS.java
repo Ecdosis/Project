@@ -21,21 +21,22 @@ public class TimelineJS  extends JSONObject
     String[] events;
     String title;
     ArrayList<Event> items;
-    JSONObject timeline;
+    JSONObject tlTitle;
     public TimelineJS( String title, String subtitle, EventType et, 
         String[] events, String langCode )
     {
         this.events = events;
         this.title = title;
-        timeline = new JSONObject();
-        this.put( "timeline", timeline );
+        tlTitle = new JSONObject();
+        this.put( "title", tlTitle );
         this.items = new ArrayList<Event>();
-        timeline.put("headline", title );
+        JSONObject tlText = new JSONObject();
+        tlTitle.put("text", tlText );
         // prevent resorting of equal dates 
-        timeline.put("type","default");
-        timeline.put("text",subtitle);
+        tlText.put("headline",title);
+        tlText.put("text",subtitle);
         Locale locale = new Locale( langCode );
-        System.out.println("Fetching events of type "+et.toString());
+        //System.out.println("Fetching events of type "+et.toString());
         for ( int i=0;i<events.length;i++ )
         {
             JSONObject item = (JSONObject)JSONValue.parse(events[i]);
@@ -51,7 +52,7 @@ public class TimelineJS  extends JSONObject
                 items.add( ne );
             }
         }
-        System.out.println("Found "+items.size()+" events");
+        //System.out.println("Found "+items.size()+" events");
     }
     public String toJSONString()
     {
@@ -63,13 +64,13 @@ public class TimelineJS  extends JSONObject
         Event[] arr = new Event[items.size()];
         items.toArray(arr);
         Arrays.sort( arr );
-        JSONArray date = new JSONArray();
+        JSONArray dates = new JSONArray();
         for ( int i=0;i<arr.length;i++ )
         {
-            date.add( arr[i].toJSONObject() );
+            dates.add( arr[i].toJSONObject() );
         }
         //if ( arr.length > 0 )
         //    timeline.put("startDate", arr[0].startDate.toCommaSep());
-        timeline.put( "date", date );
+        this.put( "events", dates );
     }
 }

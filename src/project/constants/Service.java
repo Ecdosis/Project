@@ -34,4 +34,6 @@ public class Service {
     public static final String WORKS = "works";
     public static final String BIOGRAPHY = "biography";
     public static final String TIMELINE = "timeline";
+    public static final String METADATA = "metadata";
+    public static final String RANDOMDOCID = "randomdocid";
 }

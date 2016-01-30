@@ -3,17 +3,27 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/desmond/NetBeansProjects/Project/src/project/handler/get/ProjectGetWorks.java</file>
-            <file>file:/home/desmond/NetBeansProjects/Project/src/project/constants/Service.java</file>
+            <file>file:/home/desmond/NetBeansProjects/Project/src/project/handler/get/timeline/BioEvent.java</file>
+            <file>file:/home/desmond/NetBeansProjects/Project/src/project/handler/get/ProjectGetEvents.java</file>
             <file>file:/home/desmond/NetBeansProjects/Project/src/project/handler/get/ProjectGetProjects.java</file>
+            <file>file:/home/desmond/NetBeansProjects/Project/src/project/handler/get/ProjectGetBiography.java</file>
+            <file>file:/home/desmond/NetBeansProjects/Project/src/project/handler/get/timeline/EventType.java</file>
             <file>file:/home/desmond/NetBeansProjects/Project/src/project/exception/ProjectException.java</file>
             <file>file:/home/desmond/NetBeansProjects/Project/src/project/handler/ProjectHandler.java</file>
             <file>file:/home/desmond/NetBeansProjects/Project/src/project/handler/post/ProjectPostHandler.java</file>
             <file>file:/home/desmond/NetBeansProjects/Project/src/project/JettyServerThread.java</file>
             <file>file:/home/desmond/NetBeansProjects/Project/src/project/handler/get/ProjectGetHandler.java</file>
-            <file>file:/home/desmond/NetBeansProjects/Project/src/project/ProjectWebApp.java</file>
             <file>file:/home/desmond/NetBeansProjects/Project/src/project/handler/ProjectDeleteHandler.java</file>
             <file>file:/home/desmond/NetBeansProjects/Project/src/project/JettyServer.java</file>
+            <file>file:/home/desmond/NetBeansProjects/Project/src/project/handler/get/ProjectGetWorks.java</file>
+            <file>file:/home/desmond/NetBeansProjects/Project/src/project/constants/Params.java</file>
+            <file>file:/home/desmond/NetBeansProjects/Project/src/project/constants/Service.java</file>
+            <file>file:/home/desmond/NetBeansProjects/Project/src/project/handler/get/ProjectGetMetadata.java</file>
+            <file>file:/home/desmond/NetBeansProjects/Project/src/project/handler/get/ProjectSiteView.java</file>
+            <file>file:/home/desmond/NetBeansProjects/Project/src/project/handler/get/ProjectGetTimeline.java</file>
+            <file>file:/home/desmond/NetBeansProjects/Project/src/project/handler/get/timeline/TimelineJS.java</file>
+            <file>file:/home/desmond/NetBeansProjects/Project/src/project/ProjectWebApp.java</file>
+            <file>file:/home/desmond/NetBeansProjects/Project/src/project/handler/get/timeline/Event.java</file>
             <file>file:/home/desmond/NetBeansProjects/Project/src/project/handler/get/ProjectGetSponsors.java</file>
         </group>
     </open-files>

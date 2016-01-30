@@ -22,8 +22,6 @@ if [ ! -d project/WEB-INF/lib ]; then
 fi
 rm -f project/WEB-INF/lib/*.jar
 cp dist/Project.jar project/WEB-INF/lib/
-cp lib/*.jar project/WEB-INF/lib/
-rm project/WEB-INF/lib/servlet*.jar
 cp web.xml project/WEB-INF/
 jar cf project.war -C project WEB-INF 
 echo "NB: you MUST copy the contents of tomcat-bin to \$tomcat_home/bin"

@@ -13,54 +13,63 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with Project.  If not, see <http://www.gnu.org/licenses/>.
- *  (c) copyright Desmond Schmidt 2014
+ *  (c) copyright Desmond Schmidt 2016
  */
 package project.handler.get;
 
 import calliope.core.constants.Database;
 import calliope.core.constants.JSONKeys;
+import calliope.core.constants.Formats;
 import calliope.core.database.Connection;
 import calliope.core.database.Connector;
+import java.util.Random;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import project.exception.ProjectException;
-import project.constants.Params;
 
 /**
  * Get  list of works and info about them in JSON format
  * @author desmond
  */
-public class ProjectGetWorks extends ProjectGetHandler
+public class ProjectGetRandomDocid extends ProjectGetHandler
 {
+    private static int MAX_RETRIES = 10;
     public void handle( HttpServletRequest request, 
         HttpServletResponse response, String urn ) throws ProjectException
     {
         try
         {
-            String projid = request.getParameter(Params.PROJID);
-            JSONArray jWorks = new JSONArray();
-            if ( projid != null )
+            String docid = null;
+            String projid = request.getParameter(JSONKeys.PROJID);
+            if ( projid != null && projid.length() > 0 )
             {
                 Connection conn = Connector.getConnection();
-                String[] works = conn.listDocuments(Database.WORKS,projid+"/.*",
-                    JSONKeys.DOCID );
-                for ( String work: works )
+                String[] docs = conn.listDocuments(Database.CORTEX,
+                    projid+"/.*",JSONKeys.DOCID);
+                int retries = 0;
+                Random r = new Random();
+                while ( docid == null && retries < MAX_RETRIES )
                 {
-                    String jstr = conn.getFromDb( Database.WORKS, work );
-                    if ( jstr != null )
+                    int index = r.nextInt(docs.length);
+                    String jDoc = conn.getFromDb(Database.CORTEX,docs[index]);
+                    JSONObject jObj = (JSONObject)JSONValue.parse(jDoc);
+                    String format = (String)jObj.get(JSONKeys.FORMAT);
+                    if ( format.equals(Formats.MVD_TEXT) && !docs[index].endsWith("notes") )
                     {
-                        JSONObject jDoc = (JSONObject)JSONValue.parse(jstr);
-                        jDoc.remove(JSONKeys._ID);
-                        jWorks.add( jDoc );
+                        docid = docs[index];
+                        break;
                     }
+                    else
+                        retries++;
                 }
+                if ( docid==null )
+                    docid = "";
             }
-            response.setContentType("application/json");
+            response.setContentType("text/plain");
             response.setCharacterEncoding("UTF-8");
-            response.getWriter().println(jWorks.toJSONString());
+            response.getWriter().println(docid);
         }
         catch ( Exception e )
         {

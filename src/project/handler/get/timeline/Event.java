@@ -45,9 +45,9 @@ public class Event implements Comparable<Event>
             spec.append((String)dateObj.get("qualifier"));
             spec.append(" ");
         }
-        if ( dateObj.get("day") != null && day > 0 && day < 32 )
+        if ( dayNum != null && day > 0 && day < 32 )
         {
-            spec.append(((Number)dateObj.get("day")).toString());
+            spec.append(new Integer(day).toString());
             spec.append(" ");
         }
         if ( dateObj.get("month") != null )
@@ -64,7 +64,9 @@ public class Event implements Comparable<Event>
         }
         if ( dateObj.get("year") != null )
         {
-            spec.append(dateObj.get("year"));
+            Number yearNum = (Number)dateObj.get("year");
+            
+            spec.append(new Integer(yearNum.intValue()).toString());
         }
         this.date = new FuzzyDate( spec.toString(), locale );
         if ( this.date.getYear() == 0 )
@@ -73,13 +75,15 @@ public class Event implements Comparable<Event>
     JSONObject toJSONObject()
     {
         JSONObject obj = new JSONObject();
-        obj.put("startDate", date.toCommaSep() );
-        obj.put("endDate", date.toCommaSep());
-        obj.put("headline", title);
+        obj.put("start_date", date.toJSONObject() );
+        obj.put("end_date", date.toJSONObject());
+        JSONObject textObj = new JSONObject();
+        textObj.put("headline", title);
         if ( description == null || description.length()==0 )
-            obj.put("text","no description");
+            textObj.put("text","no description");
         else
-            obj.put("text",description);
+            textObj.put("text",description);
+        obj.put( "text", textObj );
         return obj;
     }
     /**

@@ -24,6 +24,7 @@ package project.constants;
  */
 public class Params {
     public static final String DOCID = "docid";
+    public static final String PROJID = "projid";
     public static final String DESCRIPTION = "description";
     public static final String OWNER = "owner";
     public static final String LANGUAGE = "language";

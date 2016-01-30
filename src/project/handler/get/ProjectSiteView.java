@@ -30,7 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import project.exception.ProjectException;
 /**
- *
+ * Redirect to the site url named in the project metadata
  * @author desmond
  */
 public class ProjectSiteView 
@@ -48,11 +48,14 @@ public class ProjectSiteView
                 JSONObject jDoc = (JSONObject)JSONValue.parse(jstr);
                 String url = (String)jDoc.get(JSONKeys.URL);
                 if ( url == null )
+                    url = (String)jDoc.get(JSONKeys.SITE_URL);
+                if ( url == null )
                 {
                     System.out.println("Missing site url for "+docid);
                     url = request.getRequestURI();
                 }
-                response.sendRedirect(url);
+                else
+                    response.sendRedirect(url);
             }
         }
         catch ( Exception e )

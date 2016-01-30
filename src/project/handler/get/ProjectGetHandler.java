@@ -37,7 +37,9 @@ public class ProjectGetHandler extends ProjectHandler
         try 
         {
             String first = Utils.first(urn);
-            if ( first != null && first.equals(Service.SPONSORS) )
+            if ( first.equals(Service.RANDOMDOCID) )
+                new ProjectGetRandomDocid().handle(request,response,Utils.pop(urn) );
+            else if ( first != null && first.equals(Service.SPONSORS) )
                 new ProjectGetSponsors().handle(request,response,Utils.pop(urn) );
             else if ( first != null && first.equals(Service.LIST) )
                 new ProjectGetProjects().handle(request,response,Utils.pop(urn) );
@@ -53,6 +55,8 @@ public class ProjectGetHandler extends ProjectHandler
                 new ProjectGetDocuments().handle(request,response,Utils.pop(urn) );
             else if ( first.equals(Service.WORKS) )
                 new ProjectGetWorks().handle(request,response,Utils.pop(urn) );
+            else if ( first.equals(Service.METADATA) )
+                new ProjectGetMetadata().handle(request,response,Utils.pop(urn) );
             else    // user wants a specific project
                 new ProjectGetOneProject().handle(request,response,urn);
         } 
