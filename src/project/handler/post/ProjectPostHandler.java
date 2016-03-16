@@ -218,7 +218,7 @@ public class ProjectPostHandler extends ProjectHandler
                     try
                     {
                         Corpix.addImage( ProjectWebApp.webRoot, imageId, 
-                            icon.type, icon.getData() );
+                            icon.getName(),"icon",icon.type, icon.getData() );
                     }
                     catch ( Exception e )
                     {
