@@ -65,7 +65,7 @@ public class ProjectGetHandler extends ProjectHandler
             try
             {
                 response.setCharacterEncoding("UTF-8");
-                response.getWriter().println(e.getMessage());
+                response.getWriter().write(e.getMessage());
             }
             catch ( Exception ex )
             {

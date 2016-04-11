@@ -54,7 +54,11 @@ public class ProjectGetBiography extends ProjectGetHandler
                 if ( res != null && res.length()>0 )
                 {
                     JSONObject jobj = (JSONObject)JSONValue.parse(res);
-                    int it = ((Long)jobj.get("type")).intValue();
+                    int it;
+                    if ( jobj.get("type") instanceof Double )
+                        it = ((Double)jobj.get("type")).intValue();
+                    else
+                        it = ((Long)jobj.get("type")).intValue();
                     EventType et = EventType.fromInt(it);
                     if ( et == EventType.biography )
                     {

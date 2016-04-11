@@ -1,7 +1,17 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/* This file is part of MML.
+ *
+ *  Project is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  Project is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with Project.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package project.handler.post;
@@ -142,6 +152,13 @@ public class ProjectPostEventHandler extends ProjectPostHandler
         }
         return evt.toJSONString();
     }
+    /**
+     * Main hander function - start here
+     * @param request the incoming http request
+     * @param response the interim response object
+     * @param urn the urn used for the post
+     * @throws ProjectException 
+     */
     public void handle( HttpServletRequest request, 
         HttpServletResponse response, String urn ) throws ProjectException
     {
@@ -154,7 +171,6 @@ public class ProjectPostEventHandler extends ProjectPostHandler
                 Connection conn = Connector.getConnection();
                 String res = conn.getFromDbByField(Database.EVENTS, 
                     this._id, "_id" );
-                System.out.println("Retrieved for deletion: "+res );
                 if ( res != null )
                 {
                     JSONObject jobj = (JSONObject)JSONValue.parse( res );
@@ -173,8 +189,8 @@ public class ProjectPostEventHandler extends ProjectPostHandler
                 System.out.println("deleted id="+this._id);
             }
             else if ( first.equals(Service.ADD) && event != null )
-            {
-                event = checkEvent( event );
+            { 
+               event = checkEvent( event );
                 String resp = Connector.getConnection().addToDb( 
                     Database.EVENTS, event );
                 response.setContentType("application/json");
@@ -184,9 +200,10 @@ public class ProjectPostEventHandler extends ProjectPostHandler
             else if ( first.equals(Service.UPDATE) )
             {
                 event = checkEvent(event);
-                String resp = Connector.getConnection().addToDb( 
-                    Database.EVENTS, event );
                 JSONObject cObj = (JSONObject)JSONValue.parse(event);
+                Connection conn = Connector.getConnection();
+                conn.removeFromDb( Database.EVENTS, (String)cObj.get(JSONKeys.DOCID));
+                String resp = conn.addToDb( Database.EVENTS, event );
                 JSONObject jObj = (JSONObject)JSONValue.parse(resp);
                 jObj.put( "docid",(String)cObj.get("docid") );
                 resp = jObj.toJSONString();
