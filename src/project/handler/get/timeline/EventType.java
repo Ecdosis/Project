@@ -14,6 +14,7 @@ public enum EventType
     biography,
     composition,
     letter,
+    location,
     other,
     all;
     public static EventType fromInt( int value )
@@ -27,8 +28,10 @@ public enum EventType
             case 2:
                 return letter;
             case 3:
+                return location;
+            case 4:
                 return other;
-            case 4: default:
+            case 5: default:
                 return all;
         }
     }
@@ -42,8 +45,10 @@ public enum EventType
                 return 1;
             case letter:
                 return 2;
-            case other:
+            case location:
                 return 3;
+            case other:
+                return 4;
             case all: default:
                 return 4;
         }

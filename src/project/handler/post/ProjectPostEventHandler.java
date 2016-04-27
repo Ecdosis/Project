@@ -190,7 +190,7 @@ public class ProjectPostEventHandler extends ProjectPostHandler
             }
             else if ( first.equals(Service.ADD) && event != null )
             { 
-               event = checkEvent( event );
+                event = checkEvent( event );
                 String resp = Connector.getConnection().addToDb( 
                     Database.EVENTS, event );
                 response.setContentType("application/json");
