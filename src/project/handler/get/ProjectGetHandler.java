@@ -53,10 +53,16 @@ public class ProjectGetHandler extends ProjectHandler
                 new ProjectSiteView().handle(request,response,Utils.pop(urn) );
             else if ( first.equals(Service.DOCUMENTS) )
                 new ProjectGetDocuments().handle(request,response,Utils.pop(urn) );
+            else if ( first.equals(Service.NEWDOCS) )
+                new ProjectGetNewDocuments().handle(request,response,Utils.pop(urn) );
             else if ( first.equals(Service.WORKS) )
                 new ProjectGetWorks().handle(request,response,Utils.pop(urn) );
             else if ( first.equals(Service.METADATA) )
                 new ProjectGetMetadata().handle(request,response,Utils.pop(urn) );
+            else if ( first.equals(Service.VTEMPLATE) )
+                new ProjectGetVTemplate().handle(request,response,Utils.pop(urn) );
+            else if ( first.equals(Service.PROJID) )
+                new ProjectGetProjId().handle(request,response,Utils.pop(urn) );
             else    // user wants a specific project
                 new ProjectGetOneProject().handle(request,response,urn);
         } 
@@ -66,6 +72,7 @@ public class ProjectGetHandler extends ProjectHandler
             {
                 response.setCharacterEncoding("UTF-8");
                 response.getWriter().write(e.getMessage());
+                System.out.println(e.getMessage());
             }
             catch ( Exception ex )
             {

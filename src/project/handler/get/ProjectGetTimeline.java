@@ -9,7 +9,6 @@ import calliope.core.database.Connector;
 import calliope.core.Utils;
 import calliope.core.constants.JSONKeys;
 import calliope.core.constants.Database;
-import calliope.exception.AeseException;
 import project.constants.Params;
 import project.handler.get.timeline.TimelineJS;
 import project.exception.ProjectException;
@@ -33,7 +32,6 @@ public class ProjectGetTimeline extends ProjectGetHandler
     {
         EventType result = EventType.all;
         String et = request.getParameter(Params.EVENT_TYPE);
-        System.out.println("event_type="+et);
         if ( et != null && et.length()>0 )
         {
             try

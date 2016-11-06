@@ -41,6 +41,9 @@ public class TimelineJS  extends JSONObject
         {
             JSONObject item = (JSONObject)JSONValue.parse(events[i]);
             String eventTitle = (String)item.get("title");
+            String link = (String)item.get("link");
+            if ( link != null )
+                eventTitle = "<a href=\""+link+"\">"+eventTitle+"</a>";
             JSONObject eventDate = (JSONObject)item.get("date");
             String eventDescription = (String)item.get("description");
             int intVal = ((Number)item.get("type")).intValue();

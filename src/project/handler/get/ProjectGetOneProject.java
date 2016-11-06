@@ -44,7 +44,7 @@ public class ProjectGetOneProject
             if ( urn.equals(BLANK_PROJECT) )
             {
                 jDoc = new JSONObject();
-                jDoc.put( JSONKeys.ICON, "/mml/"+Database.CORPIX+"/"
+                jDoc.put( JSONKeys.ICON, "/"+Database.CORPIX+"/"
                     +BLANK_PROJECT+"/project/"+JSONKeys.ICON );
                 Long works = new Long(0);
                 jDoc.put( JSONKeys.NWORKS, works );
@@ -60,7 +60,7 @@ public class ProjectGetOneProject
                 if ( jstr != null )
                 {
                     jDoc = (JSONObject)JSONValue.parse(jstr);
-                    jDoc.put( JSONKeys.ICON, "/mml/"+Database.CORPIX+"/"
+                    jDoc.put( JSONKeys.ICON, "/"+Database.CORPIX+"/"
                         +Utils.shortDocID(urn)+"/project/"+JSONKeys.ICON );
                     //System.out.println("pDoc.icon="+jDoc.get(JSONKeys.ICON));
                     String[] docs = conn.listDocuments(Database.CORTEX, 

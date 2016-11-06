@@ -25,12 +25,13 @@ import calliope.core.database.Connector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import project.exception.ProjectException;
+import project.constants.Params;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONValue;
 
 /**
- *
+ * Get a list of documents with a given prefix
  * @author desmond
  */
 public class ProjectGetDocuments 
@@ -48,34 +49,40 @@ public class ProjectGetDocuments
         try
         {
             Connection conn = Connector.getConnection();
-            // list documents *starting* with that urn
-            String[] docids = conn.listDocuments(Database.METADATA, urn+".*",
+            String docid = request.getParameter(Params.DOCID);
+            if ( docid == null )
+                docid = urn;
+            String[] docids = conn.listDocuments(Database.CORTEX, docid+".*",
                 JSONKeys.DOCID );
             JSONObject jDoc = new JSONObject();
             JSONArray jArray = new JSONArray();
-            for ( String docid : docids )
+            for ( String docId : docids )
             {
-                String jStr = conn.getFromDb(Database.METADATA,docid);
-                if ( jStr != null )
+                JSONObject doc = new JSONObject();
+                doc.put( JSONKeys.DOCID, docId );
+                String ccStr = conn.getFromDb(Database.CORCODE,docId+"/default");
+                if ( ccStr != null )
                 {
-                    JSONObject obj = (JSONObject)JSONValue.parse( jStr );
-                    JSONObject doc = new JSONObject();
-                    doc.put( JSONKeys.DOCID, docid );
-                    if ( obj.containsKey(JSONKeys.TITLE) )
-                        doc.put( JSONKeys.TITLE, obj.get(JSONKeys.TITLE) );
-                    if ( obj.containsKey(JSONKeys.SECTION) )
-                        doc.put( JSONKeys.SECTION, obj.get(JSONKeys.SECTION) );
-                    if ( obj.containsKey(JSONKeys.VERSION1) )
-                        doc.put( JSONKeys.VERSION1, obj.get(JSONKeys.VERSION1) );
-                    if ( obj.containsKey(JSONKeys.AUTHOR) )
-                        doc.put( JSONKeys.AUTHOR, obj.get(JSONKeys.AUTHOR) );
+                    String jStr = conn.getFromDb(Database.METADATA,docId);
+                    if ( jStr != null )
+                    {
+                        JSONObject obj = (JSONObject)JSONValue.parse( jStr );
+                        if ( obj.containsKey(JSONKeys.TITLE) )
+                            doc.put( JSONKeys.TITLE, obj.get(JSONKeys.TITLE) );
+                        if ( obj.containsKey(JSONKeys.SECTION) )
+                            doc.put( JSONKeys.SECTION, obj.get(JSONKeys.SECTION) );
+                        if ( obj.containsKey(JSONKeys.VERSION1) )
+                            doc.put( JSONKeys.VERSION1, obj.get(JSONKeys.VERSION1) );
+                        if ( obj.containsKey(JSONKeys.AUTHOR) )
+                            doc.put( JSONKeys.AUTHOR, obj.get(JSONKeys.AUTHOR) );
+                    }
                     jArray.add( doc );
                 }
             }
             jDoc.put( JSONKeys.DOCUMENTS, jArray );
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
-            response.getWriter().println(jDoc.toJSONString()); 
+            response.getWriter().println(jDoc.toJSONString().replaceAll("\\\\/", "\\/")); 
         }
         catch ( Exception e )
         {

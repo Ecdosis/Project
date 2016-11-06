@@ -27,6 +27,7 @@ public class Service {
     public static final String LIST = "list";
     public static final String VIEW = "view";
     public static final String DOCUMENTS = "documents";
+    public static final String NEWDOCS = "newdocs";
     public static final String EVENTS = "events";
     public static final String ADD = "add";
     public static final String DELETE = "delete";
@@ -36,4 +37,6 @@ public class Service {
     public static final String TIMELINE = "timeline";
     public static final String METADATA = "metadata";
     public static final String RANDOMDOCID = "randomdocid";
+    public static final String VTEMPLATE = "vtemplate";
+    public static final String PROJID = "projid";
 }
