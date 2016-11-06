@@ -49,10 +49,10 @@ public class ProjectGetDocuments
         try
         {
             Connection conn = Connector.getConnection();
-            String docid = request.getParameter(Params.DOCID);
-            if ( docid == null )
-                docid = urn;
-            String[] docids = conn.listDocuments(Database.CORTEX, docid+".*",
+            String projid = request.getParameter(Params.PROJID);
+            if ( projid == null )
+                projid = urn;
+            String[] docids = conn.listDocuments(Database.CORTEX, projid+".*",
                 JSONKeys.DOCID );
             JSONObject jDoc = new JSONObject();
             JSONArray jArray = new JSONArray();
