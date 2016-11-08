@@ -18,17 +18,22 @@
 
 package project.handler.get;
 
+import calliope.core.DocType;
 import calliope.core.constants.Database;
 import calliope.core.constants.JSONKeys;
 import calliope.core.database.Connection;
 import calliope.core.database.Connector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileFilter;
+import java.util.ArrayList;
 import project.exception.ProjectException;
 import project.constants.Params;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONValue;
+import project.ProjectWebApp;
 
 /**
  * Get a list of documents with a given prefix
@@ -36,6 +41,25 @@ import org.json.simple.JSONValue;
  */
 public class ProjectGetDocuments 
 {
+    class MyFilter implements FileFilter
+    {
+        String regex;
+        MyFilter( String regex )
+        {
+            this.regex = regex;
+        }
+        public boolean accept(File f)
+        {
+            if ( f.getName().matches(regex) )
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+    }
     /**
      * Get a list of document with a given docid prefix
      * @param request the request
@@ -52,8 +76,38 @@ public class ProjectGetDocuments
             String projid = request.getParameter(Params.PROJID);
             if ( projid == null )
                 projid = urn;
+            String withImages = request.getParameter("withimages");
             String[] docids = conn.listDocuments(Database.CORTEX, projid+".*",
                 JSONKeys.DOCID );
+            if ( withImages != null && withImages.equals("true") )
+            {
+                ArrayList<String> newIds = new ArrayList<String>();
+                // prune out these for which there are no images
+                String base = ProjectWebApp.webRoot+"/corpix/";
+                for ( String docid : docids )
+                {
+                    String path = base + docid;
+                    File f = new File( path );
+                    if ( DocType.isLetter(docid) )
+                    {
+                        File parent = f.getParentFile();
+                        //System.out.println("docid="+docid);
+                        String wildcard = DocType.getWildcardFor( f.getName() );
+                        //System.out.println("wildcard="+wildcard+" fname="+f.getName());
+                        MyFilter ff = new MyFilter(wildcard);
+                        File[] files = parent.listFiles(ff);
+                        if ( files != null && files.length > 0 )
+                            newIds.add( docid );
+                    }
+                    else if ( f.exists() && f.isDirectory() )
+                    {
+                        newIds.add( docid );
+                    }
+                }
+                docids = new String[newIds.size()];
+                newIds.toArray( docids );
+            }
+            // now we have only docids that have image representations
             JSONObject jDoc = new JSONObject();
             JSONArray jArray = new JSONArray();
             for ( String docId : docids )
